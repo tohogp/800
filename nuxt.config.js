@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+import webpack from 'webpack'
 
 export default {
   /*
@@ -88,5 +89,10 @@ export default {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
+    plugins: [
+      new webpack.ProvidePlugin({
+        '_': 'lodash'
+      })
+    ]
   }
 }
