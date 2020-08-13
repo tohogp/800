@@ -110,6 +110,16 @@ export default {
           icon: 'mdi-clipboard-edit',
           title: 'todo',
           to: '/todos'
+        },
+        {
+          icon: 'mdi-account',
+          title: 'Users',
+          to: '/users'
+        },
+        {
+          icon: 'mdi-alpha-s-circle',
+          title: 'Stores',
+          to: '/stores'
         }
       ],
       miniVariant: false,
