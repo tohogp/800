@@ -120,6 +120,11 @@ export default {
           icon: 'mdi-alpha-s-circle',
           title: 'Stores',
           to: '/stores'
+        },
+        {
+          icon: 'mdi-fruit-pineapple',
+          title: 'Items',
+          to: '/items'
         }
       ],
       miniVariant: false,
