@@ -59,9 +59,26 @@
                           label="受注" />
                       </v-col>
                       <v-col cols="6">
-                        <v-switch 
-                          v-model="item.variationFlg" 
+                        <v-text-field
+                          v-model="variation" 
                           label="バリエーション" />
+                      </v-col>
+                      <v-col cols="6">
+                        <v-btn 
+                          color="secondary" 
+                          v-on:click.prevent="addVariation(variation)">
+                          追加
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="6">
+                        {{item.variations}}
+                      </v-col>
+                      <v-col cols="6">
+                        <v-btn v-if="item.variations"
+                          color="secondary" 
+                          v-on:click.prevent="removeVariation">
+                          削除
+                        </v-btn>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -83,9 +100,6 @@
         <template v-slot:item.orderFlg="{ item }">
           <v-icon v-if="item.orderFlg" small >mdi-power-off</v-icon>
           <v-icon v-else small >mdi-close-thick</v-icon>
-        </template>
-        <template v-slot:item.variationFlg="{ item }">
-          <div v-if="item.variationFlg">あり</div>
         </template>
         <template v-slot:item.actions="{ item }">
           <v-icon
@@ -117,10 +131,11 @@ export default {
             { text: 'ヨミ', value: 'yomi' },
             { text: '要冷蔵', value: 'coolFlg' },
             { text: '受注', value: 'orderFlg' },
-            { text: 'バリエーション', value: 'variationFlg' },
+            { text: 'バリエーション', value: 'variations' },
             { text: '操作', value: 'actions' }
           ],
           item: {},
+          variation: '',
         }
     },
     created: function() {
@@ -141,10 +156,11 @@ export default {
         edit (item) {
           this.item = _.cloneDeep(item)
           this.item.id = item.id
+          this.variation = ''
           this.dialog = true
         },
         add() {
-            this.item = {coolFlg: false, orderFlg: true, variationFlg: false}
+            this.item = {coolFlg: false, orderFlg: true, variations: ''}
             this.dialog = true
         },
         create(item){
@@ -162,6 +178,16 @@ export default {
           this.$store.dispatch('items/update', item)
           this.close()
         },
+        addVariation (variation) {
+          if (this.item.variations != '') {
+            variation = ',' + variation
+          }
+          this.item.variations = this.item.variations + variation
+          this.variation = ''
+        },
+        removeVariation () {
+          this.item.variations = ''
+        }
     }
 }
 </script>

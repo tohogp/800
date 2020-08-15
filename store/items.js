@@ -25,7 +25,7 @@ export const actions = {
         yomi: item.yomi,
         coolFlg: item.coolFlg,
         orderFlg: item.orderFlg,
-        variationFlg: item.variationFlg,
+        variations: item.variations,
         created: firebase.firestore.FieldValue.serverTimestamp()
       })
     }
@@ -37,7 +37,7 @@ export const actions = {
         yomi: item.yomi,
         coolFlg: item.coolFlg,
         orderFlg: item.orderFlg,
-        variationFlg: item.variationFlg,
+        variations: item.variations,
         updated: firebase.firestore.FieldValue.serverTimestamp()
       })
     }
