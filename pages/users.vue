@@ -6,7 +6,7 @@
   >
     <v-card v-if="users">
       <v-card-title>
-        <span class="headline">{{ formTitle }}</span>
+        <span class="headline">ユーザー一覧</span>
         <v-spacer />
         <v-text-field
           v-model="search"
@@ -34,7 +34,7 @@
           <v-dialog v-model="dialog" max-width="500px">
             <v-card>
               <v-card-title>
-                <span class="headline">ユーザー編集</span>
+                <span class="headline">{{ formTitle }}</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
@@ -46,6 +46,16 @@
                       <v-text-field v-model="user.name" label="名前" />
                     </v-col>
                     <v-col cols="12">
+                      <v-select 
+                        v-model="user.store" 
+                        :items="stores"
+                        item-text="name" 
+                        item-value="id"
+                        attach chips label="店舗" multiple
+                      >
+                      </v-select>
+                    </v-col>
+                    <v-col cols="12">
                       <v-text-field v-model="user.memo" label="メモ" />
                     </v-col>
                   </v-row>
@@ -54,12 +64,17 @@
               <v-card-actions>
                 <v-spacer />
                   <v-btn @click="close">閉じる</v-btn>
-                  <v-btn v-if="isPersistedUser" class="primary" @click="update">更新する</v-btn>
-                  <v-btn v-else class="primary" @click="create">追加する</v-btn>
+                  <v-btn v-if="isPersistedUser" class="primary" @click="update(user)">更新する</v-btn>
+                  <v-btn v-else class="primary" @click="create(user)">追加する</v-btn>
                 <v-spacer />
               </v-card-actions>
             </v-card>
           </v-dialog>
+        </template>
+        <template v-slot:item.store="{ item }">
+          <v-chip x-small v-for="store in item.store">
+            {{ storeName(store) }}
+          </v-chip>
         </template>
         <template v-slot:item.actions="{ item }">
           <v-icon
@@ -70,7 +85,7 @@
           </v-icon>
           <v-icon
             small
-            @click="remove(item)"
+            @click="remove(item.id)"
           >
             mdi-delete
           </v-icon>
@@ -90,15 +105,22 @@ export default {
         { text: 'ID', value: 'id' },
         { text: 'メールアドレス', value: 'email' },
         { text: '名前', value: 'name' },
+        { text: '店舗', value: 'store' },
         { text: 'メモ', value: 'memo' },
         { text: '操作', value: 'actions' }
       ],
       user: {},
     }
   },
+  created: function() {
+    this.$store.dispatch('users/init')
+  },
   computed: {
     users () {
       return this.$store.getters['users/getUsers']
+    },
+    stores () {
+      return this.$store.getters['users/getStores']
     },
     isPersistedUser () {
       return !!this.user.id
@@ -109,17 +131,16 @@ export default {
   },
   methods: {
     edit (user) {
-      this.user = Object.assign({}, user)
+      this.user = _.cloneDeep(user)
+      this.user.id = user.id
       this.dialog = true
     },
-    update () {
-      const payload = { user: this.user }
-      this.$store.commit('users/updateUser', payload)
+    update (user) {
+      this.$store.dispatch('users/update', user)
       this.close()
     },
     remove (user) {
-      const payload = { user: user }
-      this.$store.commit('users/removeUser', payload)
+      this.$store.dispatch('users/remove', user)
     },
     close () {
       this.dialog = false
@@ -129,11 +150,13 @@ export default {
       this.user = {}
       this.dialog = true
     },
-    create () {
-      this.user.id = 100;
-      const payload = { user: this.user }
-      this.$store.commit('users/addUser', payload)
+    create (user) {
+      this.$store.dispatch('users/create', user)
       this.close()
+    },
+    storeName (store_id) {
+      const store = this.stores.find((s) => s.id === store_id)
+      return store ? store.name : '店舗が見つかりません'
     },
   }
 }
